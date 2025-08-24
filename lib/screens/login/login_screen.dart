@@ -20,24 +20,29 @@ class LoginScreen extends StatelessWidget {
 
                 // Tarjeta flotante con el formulario
                 Transform.translate(
-                  offset: const Offset(0, -70),
+                  offset: const Offset(0, -30), // ⬅️ antes: -70
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 520),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Card(
-                          elevation: 10,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 28,
-                              vertical: 26,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                LoginForm(), // usa tu lógica actual de AuthService
-                              ],
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 20,
+                          ), // ⬅️ baja un poco más
+                          child: Card(
+                            elevation: 10,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 28,
+                                vertical: 26,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  LoginForm(), // usa tu lógica actual de AuthService
+                                ],
+                              ),
                             ),
                           ),
                         ),

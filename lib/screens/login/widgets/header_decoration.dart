@@ -34,24 +34,33 @@ class LoginHeader extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.only(top: 64.0),
+              padding: const EdgeInsets.only(top: 20.0),
               child: Column(
                 children: [
-                  // Logo dentro de un círculo translúcido para mejor contraste
+                  // Logo dentro de un círculo con relieve (sombra inferior)
                   Container(
-                    width: 120, // 🔁 ajusta tamaño del circulo
-                    height: 120, // 🔁 ajusta tamaño del circulo
-                    padding: const EdgeInsets.all(16),
-                    decoration: const BoxDecoration(
-                      color: Colors.white, // ✅ fondo blanco sólido
+                    width: 160, // tamaño del círculo
+                    height: 160,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(
+                            0.25,
+                          ), // sombra inferior
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
                     child: Image.asset(
                       'assets/images/logo_marianela.png',
                       fit: BoxFit.contain,
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 2),
                   const Text(
                     'Residencial Marianela Alajuela',
                     style: TextStyle(
@@ -65,7 +74,7 @@ class LoginHeader extends StatelessWidget {
               ),
             ),
           ),
-          // Decoraciones sutiles (círculos)
+          // Decoraciones sutiles (círculos flotantes)
           Positioned(top: 40, left: 28, child: _softCircle(26)),
           Positioned(top: 96, right: 36, child: _softCircle(18)),
         ],
