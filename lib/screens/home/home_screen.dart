@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/routes/app_routes.dart';
+import '../../core/widgets/wave_header.dart'; // 👈 importa el header reutilizable
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   Future<void> _logout(BuildContext context) async {
     final ok = await AuthService.logout();
-
-    // 👇 En Flutter moderno puedes verificar que el context siga montado
     if (!context.mounted) return;
 
     if (ok) {
@@ -27,7 +26,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true, // cuerpo detrás del AppBar
       appBar: AppBar(
+        backgroundColor: Colors.transparent, // AppBar transparente
+        elevation: 0,
         title: const Text("Home"),
         actions: [
           IconButton(
@@ -37,10 +39,32 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const Center(
-        child: Text(
-          "Bienvenido a Residencial Marianela",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const WaveHeader(
+              height: 240,
+            ), // 👈 mismo arte que en login (sin logo)
+            Transform.translate(
+              offset: const Offset(0, -24), // “sube” un poco el contenido
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Card(
+                  elevation: 6,
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: const Text(
+                      "Bienvenido a Residencial Marianela",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Cabecera con degradé morado y ola inferior
-class LoginHeader extends StatelessWidget {
-  const LoginHeader({super.key, this.height = 320});
+class WaveHeader extends StatelessWidget {
+  const WaveHeader({super.key, this.height = 220});
   final double height;
 
   @override
@@ -30,51 +29,7 @@ class LoginHeader extends StatelessWidget {
               ),
             ),
           ),
-          // Logo + Título
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: Column(
-                children: [
-                  // Logo dentro de un círculo con relieve (sombra inferior)
-                  Container(
-                    width: 160, // tamaño del círculo
-                    height: 160,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(
-                            alpha: .25,
-                          ), // sombra inferior
-                          blurRadius: 12,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Image.asset(
-                      'assets/images/logo_marianela.png',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  const Text(
-                    'Residencial Marianela Alajuela',
-                    style: TextStyle(
-                      fontSize: 28,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: .3,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Decoraciones sutiles (círculos flotantes)
+          // Burbujas decorativas (igual que en LoginHeader)
           Positioned(top: 40, left: 28, child: _softCircle(26)),
           Positioned(top: 96, right: 36, child: _softCircle(18)),
         ],
@@ -86,7 +41,7 @@ class LoginHeader extends StatelessWidget {
     width: size,
     height: size,
     decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: .18),
+      color: Colors.white.withValues(alpha: .18), // antes withOpacity
       shape: BoxShape.circle,
     ),
   );
