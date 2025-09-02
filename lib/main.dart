@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'core/services/auth_service.dart';
 import 'package:marianela_web/screens/login/login_screen.dart';
 import 'package:marianela_web/screens/home/role_router.dart';
+import 'core/services/api_client.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,7 @@ class MarianelaApp extends StatelessWidget {
       title: 'Marianela',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(colorSchemeSeed: kBrand, useMaterial3: true),
+      navigatorKey: navigatorKey, // 👈 ahora tu app puede redirigir globalmente
       initialRoute: startLoggedIn ? '/home' : '/login',
       routes: {
         '/login': (_) => const LoginScreen(),

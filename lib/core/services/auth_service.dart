@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../env.dart';
+import 'api_client.dart'; // 👈 nuevo import
 
 enum UserRole { admin, resident, guard, unknown }
 
@@ -105,19 +106,16 @@ class AuthService {
   /// Verificar token y cargar usuario desde /me
   static Future<bool> me() async {
     if (_token == null) return false;
-    try {
-      final url = Uri.parse("${Env.apiBaseUrl}/me");
-      final res = await http.get(url, headers: authHeaders());
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body) as Map<String, dynamic>;
-        _user = data;
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(_userKey, jsonEncode(data));
-        return true;
-      }
-    } catch (_) {
-      // ignoramos errores de red aquí
+
+    final res = await ApiClient.get('/me'); // 👈 usamos ApiClient
+    if (res.statusCode == 200) {
+      final data = jsonDecode(res.body) as Map<String, dynamic>;
+      _user = data;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_userKey, jsonEncode(data));
+      return true;
     }
+
     await _clearSession();
     return false;
   }
