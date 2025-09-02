@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../env.dart';
 
 enum UserRole { admin, resident, guard, unknown }
 
 class AuthService {
-  static const String baseUrl = "http://marianela-api.test/api";
   static const String _tokenKey = 'auth_token';
   static const String _userKey = 'auth_user';
 
@@ -62,7 +62,7 @@ class AuthService {
 
   /// Login
   static Future<bool> login(String usuario, String password) async {
-    final url = Uri.parse("$baseUrl/login"); // tu API: POST /api/login
+    final url = Uri.parse("${Env.apiBaseUrl}/login");
     final res = await http.post(
       url,
       headers: {'Accept': 'application/json'},
@@ -87,7 +87,7 @@ class AuthService {
       await _clearSession();
       return true;
     }
-    final url = Uri.parse("$baseUrl/logout");
+    final url = Uri.parse("${Env.apiBaseUrl}/logout");
     final res = await http.post(
       url,
       headers: {
@@ -99,6 +99,26 @@ class AuthService {
       await _clearSession();
       return true;
     }
+    return false;
+  }
+
+  /// Verificar token y cargar usuario desde /me
+  static Future<bool> me() async {
+    if (_token == null) return false;
+    try {
+      final url = Uri.parse("${Env.apiBaseUrl}/me");
+      final res = await http.get(url, headers: authHeaders());
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body) as Map<String, dynamic>;
+        _user = data;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_userKey, jsonEncode(data));
+        return true;
+      }
+    } catch (_) {
+      // ignoramos errores de red aquí
+    }
+    await _clearSession();
     return false;
   }
 

@@ -6,11 +6,17 @@ import 'package:marianela_web/screens/home/role_router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthService.init();
-  runApp(const MarianelaApp());
+
+  // 🔎 Valida token contra /me
+  final loggedIn = await AuthService.me();
+
+  runApp(MarianelaApp(startLoggedIn: loggedIn));
 }
 
 class MarianelaApp extends StatelessWidget {
-  const MarianelaApp({super.key});
+  const MarianelaApp({super.key, this.startLoggedIn = false});
+  final bool startLoggedIn;
+
   static const kBrand = Color(0xFF7A6CF7);
 
   @override
@@ -19,9 +25,9 @@ class MarianelaApp extends StatelessWidget {
       title: 'Marianela',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(colorSchemeSeed: kBrand, useMaterial3: true),
-      initialRoute: AuthService.isLoggedIn ? '/home' : '/login',
+      initialRoute: startLoggedIn ? '/home' : '/login',
       routes: {
-        '/login': (_) => const LoginScreen(), // tu pantalla actual
+        '/login': (_) => const LoginScreen(),
         '/home': (_) => const RoleRouter(),
       },
     );
