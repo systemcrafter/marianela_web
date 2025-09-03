@@ -3,6 +3,7 @@ import 'package:marianela_web/core/services/auth_service.dart';
 import 'package:marianela_web/screens/home/shared/home_card.dart';
 import 'package:marianela_web/screens/home/shared/home_header_decoration.dart';
 import 'package:marianela_web/screens/home/shared/home_bottom_nav.dart';
+import 'package:marianela_web/screens/resident/accounts_pending_screen.dart';
 
 class HomeScreenResident extends StatelessWidget {
   const HomeScreenResident({super.key});
@@ -49,7 +50,15 @@ class HomeScreenResident extends StatelessWidget {
                   HomeCard(
                     title: 'Pagos / Estados',
                     icon: Icons.receipt_long,
-                    onTap: () {},
+                    // 👇 aquí conectamos a AccountsPendingScreen
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AccountsPendingScreen(),
+                        ),
+                      );
+                    },
                   ),
                   HomeCard(
                     title: 'Tickets / Soporte',

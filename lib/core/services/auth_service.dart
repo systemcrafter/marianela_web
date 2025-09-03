@@ -75,7 +75,12 @@ class AuthService {
       final token = data['token'] as String?;
       final user = data['user'] as Map<String, dynamic>?;
       if (token != null && token.isNotEmpty && user != null) {
+        // 🔹 Guardamos sesión con datos iniciales
         await _saveSession(token, user);
+
+        // 🔹 Refrescamos usuario desde /me (para incluir house_id)
+        await me();
+
         return true;
       }
     }
