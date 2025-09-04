@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:marianela_web/core/services/auth_service.dart';
 import 'package:marianela_web/core/env.dart';
@@ -21,8 +22,11 @@ class ApiClient {
     final url = Uri.parse("${Env.apiBaseUrl}$endpoint");
     final res = await http.post(
       url,
-      headers: AuthService.authHeaders(),
-      body: body,
+      headers: {
+        ...AuthService.authHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: body != null ? jsonEncode(body) : null,
     );
     if (res.statusCode == 401) {
       await AuthService.logout();

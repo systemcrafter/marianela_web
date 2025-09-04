@@ -78,6 +78,9 @@ class AuthService {
         // 🔹 Guardamos sesión con datos iniciales
         await _saveSession(token, user);
 
+        // Imprime token para debug
+        print("DEBUG token => $token");
+
         // 🔹 Refrescamos usuario desde /me (para incluir house_id)
         await me();
 
