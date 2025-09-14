@@ -8,6 +8,7 @@ import 'package:marianela_web/screens/login/widgets/gradient_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
+import 'dart:html' as html; // 👈 Para descargar en web
 
 class InviteFormScreen extends StatefulWidget {
   const InviteFormScreen({super.key});
@@ -20,8 +21,8 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _visitorCtrl = TextEditingController();
   final _identificationCtrl = TextEditingController();
-  DateTime? _validFrom;
-  DateTime? _validUntil;
+  DateTime? _validFrom = DateTime.now();
+  DateTime? _validUntil = DateTime.now();
   bool _isLoading = false;
 
   @override
@@ -35,7 +36,7 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: now,
+      initialDate: isFrom ? _validFrom ?? now : _validUntil ?? now,
       firstDate: now.subtract(const Duration(days: 1)),
       lastDate: DateTime(now.year + 1),
     );
@@ -88,11 +89,10 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
 
         _formKey.currentState!.reset();
         setState(() {
-          _validFrom = null;
-          _validUntil = null;
+          _validFrom = DateTime.now();
+          _validUntil = DateTime.now();
         });
 
-        // 👉 Diferente comportamiento en móvil vs web
         if (!kIsWeb) {
           // 📱 Android/iOS → menú nativo de compartir
           Share.share(
@@ -101,12 +101,24 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
             "Válido desde ${invite["valid_from"]} hasta ${invite["valid_until"]}",
           );
         } else {
-          // 💻 Web → fallback: mostrar dialog con botón copiar
+          // 💻 Web → mostrar dialog con código y QR
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
               title: const Text("Invitación creada"),
-              content: SelectableText("Código: $shortCode"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SelectableText("Código: $shortCode"),
+                  const SizedBox(height: 16),
+                  if (invite["qr_code"] != null)
+                    Image.memory(
+                      base64Decode(invite["qr_code"].split(",").last),
+                      width: 160,
+                      height: 160,
+                    ),
+                ],
+              ),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -118,7 +130,24 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
                       ),
                     );
                   },
-                  child: const Text("Copiar"),
+                  child: const Text("Copiar código"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final qrBytes = base64Decode(
+                      invite["qr_code"].split(",").last,
+                    );
+
+                    final blob = html.Blob([qrBytes]);
+                    final url = html.Url.createObjectUrlFromBlob(blob);
+
+                    final anchor = html.AnchorElement(href: url)
+                      ..setAttribute("download", "qr_code.png")
+                      ..click();
+
+                    html.Url.revokeObjectUrl(url);
+                  },
+                  child: const Text("Descargar QR"),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
@@ -225,9 +254,7 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              _validFrom == null
-                                  ? "Desde: no seleccionado"
-                                  : "Desde: ${DateFormat("yyyy-MM-dd").format(_validFrom!)}",
+                              "Desde: ${DateFormat("yyyy-MM-dd").format(_validFrom!)}",
                             ),
                           ),
                           ElevatedButton(
@@ -241,9 +268,7 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              _validUntil == null
-                                  ? "Hasta: no seleccionado"
-                                  : "Hasta: ${DateFormat("yyyy-MM-dd").format(_validUntil!)}",
+                              "Hasta: ${DateFormat("yyyy-MM-dd").format(_validUntil!)}",
                             ),
                           ),
                           ElevatedButton(
