@@ -8,7 +8,7 @@ import 'package:marianela_web/screens/login/widgets/gradient_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
-import 'dart:html' as html; // 👈 Para descargar en web
+import 'dart:html' as html;
 
 class InviteFormScreen extends StatefulWidget {
   const InviteFormScreen({super.key});

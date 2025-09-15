@@ -5,6 +5,7 @@ import 'package:marianela_web/screens/home/shared/home_header_decoration.dart';
 import 'package:marianela_web/screens/home/shared/home_bottom_nav.dart';
 import 'package:marianela_web/screens/resident/accounts_pending_screen.dart';
 import 'package:marianela_web/screens/resident/invites.dart';
+import 'package:marianela_web/screens/resident/invites_history.dart';
 
 class HomeScreenResident extends StatelessWidget {
   const HomeScreenResident({super.key});
@@ -51,14 +52,20 @@ class HomeScreenResident extends StatelessWidget {
                     },
                   ),
                   HomeCard(
-                    title: 'Reportar incidencias',
-                    icon: Icons.report,
-                    onTap: () {},
+                    title: 'Historial Autorizaciones',
+                    icon: Icons.list,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const InvitesHistoryScreen(),
+                        ),
+                      );
+                    },
                   ),
                   HomeCard(
                     title: 'Consulta Pendientes',
                     icon: Icons.receipt_long,
-                    // 👇 aquí conectamos a AccountsPendingScreen
                     onTap: () {
                       Navigator.push(
                         context,
