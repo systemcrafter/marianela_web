@@ -22,12 +22,12 @@ class HomeScreenGuard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final role = AuthService.user?['role'] ?? ''; // ← viene del backend
+    final name = AuthService.user?['name'] ?? '';
 
     return Scaffold(
       body: Column(
         children: [
-          HomeHeaderDecoration(height: 120, title: "Bienvenid@ $role"),
+          HomeHeaderDecoration(height: 120, title: "Bienvenid(a) $name"),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16),

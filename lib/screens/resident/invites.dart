@@ -8,6 +8,7 @@ import 'package:marianela_web/screens/login/widgets/gradient_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
 class InviteFormScreen extends StatefulWidget {
@@ -30,6 +31,16 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
     _visitorCtrl.dispose();
     _identificationCtrl.dispose();
     super.dispose();
+  }
+
+  /// 🔹 Nueva función para limpiar campos
+  void _clearForm() {
+    _visitorCtrl.clear();
+    _identificationCtrl.clear();
+    setState(() {
+      _validFrom = DateTime.now();
+      _validUntil = DateTime.now();
+    });
   }
 
   Future<void> _pickDate(BuildContext context, bool isFrom) async {
@@ -87,18 +98,16 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
           const SnackBar(content: Text("Invitación registrada con éxito")),
         );
 
-        _formKey.currentState!.reset();
-        setState(() {
-          _validFrom = DateTime.now();
-          _validUntil = DateTime.now();
-        });
+        /// ✅ limpiamos los campos
+        _clearForm();
 
         if (!kIsWeb) {
           // 📱 Android/iOS → menú nativo de compartir
-          Share.share(
+          await Share.share(
             "Has autorizado una visita a Residencial Marianela.\n"
             "Código: $shortCode\n"
             "Válido desde ${invite["valid_from"]} hasta ${invite["valid_until"]}",
+            subject: "Nueva invitación",
           );
         } else {
           // 💻 Web → mostrar dialog con código y QR
@@ -141,7 +150,7 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
                     final blob = html.Blob([qrBytes]);
                     final url = html.Url.createObjectUrlFromBlob(blob);
 
-                    final anchor = html.AnchorElement(href: url)
+                    html.AnchorElement(href: url)
                       ..setAttribute("download", "qr_code.png")
                       ..click();
 
@@ -179,9 +188,20 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Autorizar Visitas"),
+        foregroundColor: Colors.white, // 🔹 letras blancas
+        toolbarHeight: 40,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF7A6CF7), Color(0xFF9B59F6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
         ),
       ),
       body: SingleChildScrollView(

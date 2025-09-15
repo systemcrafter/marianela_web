@@ -88,13 +88,26 @@ class _InvitesHistoryScreenState extends State<InvitesHistoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Historial de invitaciones"),
-        backgroundColor: const Color(0xFF7A6CF7),
+        foregroundColor: Colors.white,
         toolbarHeight: 40,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF7A6CF7),
+                Color(0xFF9B59F6),
+              ], // mismos tonos de WaveHeader
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
+
       body: Column(
         children: [
           const WaveHeader(height: 120), // Ola decorativa
