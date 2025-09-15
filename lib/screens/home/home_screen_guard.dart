@@ -3,6 +3,7 @@ import 'package:marianela_web/core/services/auth_service.dart';
 import 'package:marianela_web/screens/home/shared/home_card.dart';
 import 'package:marianela_web/screens/home/shared/home_header_decoration.dart';
 import 'package:marianela_web/screens/home/shared/home_bottom_nav.dart';
+import 'package:marianela_web/screens/guard/checkin_invites.dart';
 
 class HomeScreenGuard extends StatelessWidget {
   const HomeScreenGuard({super.key});
@@ -39,7 +40,14 @@ class HomeScreenGuard extends StatelessWidget {
                   HomeCard(
                     title: 'Registrar visita',
                     icon: Icons.how_to_reg,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CheckinInvitesScreen(),
+                        ),
+                      );
+                    },
                   ),
                   HomeCard(
                     title: 'Bitácora',
