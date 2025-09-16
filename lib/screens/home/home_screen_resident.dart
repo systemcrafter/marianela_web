@@ -6,6 +6,8 @@ import 'package:marianela_web/screens/home/shared/home_bottom_nav.dart';
 import 'package:marianela_web/screens/resident/accounts_pending_screen.dart';
 import 'package:marianela_web/screens/resident/invites.dart';
 import 'package:marianela_web/screens/resident/invites_history.dart';
+import 'package:marianela_web/screens/resident/ticket_form_screen.dart';
+import 'package:marianela_web/screens/resident/ticket_history.dart';
 
 class HomeScreenResident extends StatelessWidget {
   const HomeScreenResident({super.key});
@@ -76,9 +78,28 @@ class HomeScreenResident extends StatelessWidget {
                     },
                   ),
                   HomeCard(
-                    title: 'Tickets / Soporte',
+                    title: 'Reportar incidencia',
                     icon: Icons.support_agent,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TicketFormScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  HomeCard(
+                    title: 'Historial incidencias',
+                    icon: Icons.list_alt_outlined,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TicketsHistoryScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
