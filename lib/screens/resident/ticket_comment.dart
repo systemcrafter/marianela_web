@@ -29,6 +29,7 @@ class _TicketCommentScreenState extends State<TicketCommentScreen> {
 
     final user = AuthService.user;
     if (user == null || user['id'] == null) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Error: usuario no autenticado")),
@@ -40,11 +41,13 @@ class _TicketCommentScreenState extends State<TicketCommentScreen> {
       final res = await ApiClient.post(
         '/tickets/${widget.ticketId}/comments',
         body: {
-          "author_id": user['id'].toString(),
+          "author_id": user['id'], // 👈 entero real
           "body": _commentCtrl.text.trim(),
-          "is_resolution": "false",
+          "is_resolution": false, // 👈 booleano real
         },
       );
+
+      if (!mounted) return;
 
       if (res.statusCode == 201 || res.statusCode == 200) {
         Navigator.pop(context, true);
@@ -57,6 +60,7 @@ class _TicketCommentScreenState extends State<TicketCommentScreen> {
         ).showSnackBar(SnackBar(content: Text("Error: ${res.statusCode}")));
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Error al enviar comentario: $e")));
@@ -88,7 +92,7 @@ class _TicketCommentScreenState extends State<TicketCommentScreen> {
       ),
       body: Column(
         children: [
-          const WaveHeader(height: 120), // 🔹 Ola arriba
+          const WaveHeader(height: 120), // Ola arriba
 
           Expanded(
             child: Padding(
