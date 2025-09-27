@@ -8,6 +8,7 @@ import 'package:marianela_web/screens/resident/invites.dart';
 import 'package:marianela_web/screens/resident/invites_history.dart';
 import 'package:marianela_web/screens/resident/ticket_form_screen.dart';
 import 'package:marianela_web/screens/resident/ticket_history.dart';
+import 'package:marianela_web/screens/resident/payment_screen.dart';
 
 class HomeScreenResident extends StatelessWidget {
   const HomeScreenResident({super.key});
@@ -73,6 +74,18 @@ class HomeScreenResident extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const AccountsPendingScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  HomeCard(
+                    title: 'Reportar pago',
+                    icon: Icons.payment,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PaymentScreen(),
                         ),
                       );
                     },
