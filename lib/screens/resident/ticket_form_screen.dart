@@ -33,6 +33,8 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
     setState(() {
       _category = null;
     });
+    // Resetea los FormField (incluye el Dropdown a su initialValue)
+    _formKey.currentState?.reset();
   }
 
   Future<void> _submit() async {
@@ -134,13 +136,13 @@ class _TicketFormScreenState extends State<TicketFormScreen> {
               ),
               const SizedBox(height: 20),
 
-              /// Categoría
+              /// Categoría (FIX: usar initialValue)
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
                   labelText: "Categoría",
                   prefixIcon: Icon(Icons.category_outlined),
                 ),
-                value: _category,
+                initialValue: _category,
                 items: const [
                   DropdownMenuItem(value: "limpieza", child: Text("Limpieza")),
                   DropdownMenuItem(

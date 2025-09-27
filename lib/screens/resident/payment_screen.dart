@@ -1,9 +1,11 @@
+// lib/screens/resident/payment_screen.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:marianela_web/core/services/api_client.dart';
 import 'package:marianela_web/core/services/auth_service.dart';
 import 'package:marianela_web/core/widgets/wave_header.dart';
+import 'package:marianela_web/screens/login/widgets/gradient_button.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
@@ -27,7 +29,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   void initState() {
     super.initState();
-    // período por defecto: YYYY-MM actual
     _periodCtrl.text = DateFormat('yyyy-MM').format(DateTime.now());
   }
 
@@ -38,6 +39,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
     _referenceCtrl.dispose();
     _noteCtrl.dispose();
     super.dispose();
+  }
+
+  void _clearForm() {
+    _periodCtrl.text = DateFormat('yyyy-MM').format(DateTime.now());
+    _amountCtrl.clear();
+    _referenceCtrl.clear();
+    _noteCtrl.clear();
+    setState(() {
+      _selectedDate = DateTime.now();
+      _method = null;
+    });
+    _formKey.currentState?.reset();
   }
 
   Future<void> _pickDate() async {
@@ -68,7 +81,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     try {
       final data = {
-        "house_id": user['house_id'], // tomado del usuario logueado
+        "house_id": user['house_id'],
         "period": _periodCtrl.text.trim(), // YYYY-MM
         "date": DateFormat('yyyy-MM-dd').format(_selectedDate),
         "amount": int.parse(_amountCtrl.text.trim()),
@@ -85,7 +98,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Reporte enviado: ${payload["message"]}')),
         );
-        Navigator.pop(context, true);
+        _clearForm(); // mantener consistencia con ticket_form_screen
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${res.statusCode} - ${res.body}')),
@@ -106,7 +119,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final dateLabel = DateFormat('yyyy-MM-dd').format(_selectedDate);
 
     return Scaffold(
-      // AppBar con gradiente igual a ticket_comment.dart
       appBar: AppBar(
         title: const Text('Reportar pago'),
         foregroundColor: Colors.white,
@@ -125,156 +137,145 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ),
         ),
       ),
-
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const WaveHeader(height: 180), // ola superior
-
+            const WaveHeader(height: 180),
             Transform.translate(
               offset: const Offset(0, -20),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
+                padding: const EdgeInsets.all(16.0),
+                child: _buildForm(context, dateLabel),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForm(BuildContext context, String dateLabel) {
+    return Card(
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Text(
+                "Reporte de Pago",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: const Color(0xFF7A6CF7),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Fecha de pago (mini-card como invites)
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
                     children: [
-                      // Periodo YYYY-MM
-                      TextFormField(
-                        controller: _periodCtrl,
-                        decoration: const InputDecoration(
-                          labelText: 'Período (YYYY-MM)',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return 'Indica el período';
-                          }
-                          final ok = RegExp(
-                            r'^\d{4}-\d{2}$',
-                          ).hasMatch(v.trim());
-                          return ok ? null : 'Formato inválido (YYYY-MM)';
-                        },
+                      Expanded(child: Text("Fecha de pago: $dateLabel")),
+                      ElevatedButton(
+                        onPressed: _pickDate,
+                        child: const Text("Seleccionar"),
                       ),
-                      const SizedBox(height: 12),
-
-                      // Fecha del pago (selector)
-                      InkWell(
-                        onTap: _pickDate,
-                        child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: 'Fecha del pago',
-                            border: OutlineInputBorder(),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(dateLabel),
-                              const Icon(Icons.calendar_today),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Monto
-                      TextFormField(
-                        controller: _amountCtrl,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Monto (₡)',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return 'Indica el monto';
-                          }
-                          final n = int.tryParse(v.trim());
-                          if (n == null || n <= 0) return 'Monto inválido';
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Método
-                      DropdownButtonFormField<String>(
-                        value: _method,
-                        decoration: const InputDecoration(
-                          labelText: 'Método',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: const [
-                          DropdownMenuItem(
-                            value: 'efectivo',
-                            child: Text('Efectivo'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'transferencia',
-                            child: Text('Transferencia'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'tarjeta',
-                            child: Text('Tarjeta'),
-                          ),
-                        ],
-                        onChanged: (v) => setState(() => _method = v),
-                        validator: (v) =>
-                            v == null ? 'Selecciona un método' : null,
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Referencia
-                      TextFormField(
-                        controller: _referenceCtrl,
-                        decoration: const InputDecoration(
-                          labelText: 'Referencia',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'La referencia es requerida'
-                            : null,
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Nota (opcional)
-                      TextFormField(
-                        controller: _noteCtrl,
-                        maxLines: 2,
-                        decoration: const InputDecoration(
-                          labelText: 'Nota (opcional)',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _submit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7A6CF7),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: _isLoading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
-                              : const Text(
-                                  'Enviar reporte',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              // Período (YYYY-MM)
+              TextFormField(
+                controller: _periodCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Período (YYYY-MM)',
+                  prefixIcon: Icon(Icons.calendar_month_outlined),
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Indica el período';
+                  final ok = RegExp(r'^\d{4}-\d{2}$').hasMatch(v.trim());
+                  return ok ? null : 'Formato inválido (YYYY-MM)';
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Monto
+              TextFormField(
+                controller: _amountCtrl,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Monto (₡)',
+                  prefixIcon: Icon(Icons.attach_money_outlined),
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Indica el monto';
+                  final n = int.tryParse(v.trim());
+                  if (n == null || n <= 0) return 'Monto inválido';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Método (usar initialValue)
+              DropdownButtonFormField<String>(
+                initialValue: _method,
+                decoration: const InputDecoration(
+                  labelText: 'Método',
+                  prefixIcon: Icon(Icons.payments_outlined),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'efectivo', child: Text('Efectivo')),
+                  DropdownMenuItem(
+                    value: 'transferencia',
+                    child: Text('Transferencia'),
+                  ),
+                  DropdownMenuItem(value: 'tarjeta', child: Text('Tarjeta')),
+                ],
+                onChanged: (v) => setState(() => _method = v),
+                validator: (v) => v == null ? 'Selecciona un método' : null,
+              ),
+              const SizedBox(height: 16),
+
+              // Referencia
+              TextFormField(
+                controller: _referenceCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Referencia',
+                  prefixIcon: Icon(Icons.confirmation_number_outlined),
+                ),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'La referencia es requerida'
+                    : null,
+              ),
+              const SizedBox(height: 16),
+
+              // Nota (opcional)
+              TextFormField(
+                controller: _noteCtrl,
+                maxLines: 2,
+                decoration: const InputDecoration(
+                  labelText: 'Nota (opcional)',
+                  prefixIcon: Icon(Icons.sticky_note_2_outlined),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Botón consistente
+              GradientButton(
+                text: "Enviar reporte",
+                loading: _isLoading,
+                onPressed: _isLoading ? null : _submit,
+              ),
+            ],
+          ),
         ),
       ),
     );
