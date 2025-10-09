@@ -4,6 +4,8 @@ import 'package:marianela_web/screens/home/shared/home_card.dart';
 import 'package:marianela_web/screens/home/shared/home_header_decoration.dart';
 import 'package:marianela_web/screens/home/shared/home_bottom_nav.dart';
 import 'package:marianela_web/screens/guard/checkin_invites.dart';
+import 'package:marianela_web/screens/guard/list_invites.dart';
+import 'package:marianela_web/screens/resident/ticket_form_screen.dart';
 
 class HomeScreenGuard extends StatelessWidget {
   const HomeScreenGuard({super.key});
@@ -52,12 +54,26 @@ class HomeScreenGuard extends StatelessWidget {
                   HomeCard(
                     title: 'Bitácora',
                     icon: Icons.fact_check,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ListInvitesScreen(),
+                        ),
+                      );
+                    },
                   ),
                   HomeCard(
-                    title: 'Alertas',
-                    icon: Icons.emergency_share,
-                    onTap: () {},
+                    title: 'Reportar incidencia',
+                    icon: Icons.support_agent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TicketFormScreen(),
+                        ),
+                      );
+                    },
                   ),
                   HomeCard(
                     title: 'Escanear QR',
