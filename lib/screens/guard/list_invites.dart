@@ -1,4 +1,3 @@
-// lib/screens/guard/list_invites.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -32,15 +31,12 @@ class _ListInvitesScreenState extends State<ListInvitesScreen> {
   }
 
   Future<void> _refresh() async {
-    setState(() {
-      _future = _fetchToday();
-    });
+    setState(() => _future = _fetchToday());
   }
 
   String _fmtLocal(String iso) {
     try {
       final dt = DateTime.parse(iso).toLocal();
-      // Ej: 08/10 13:45
       return DateFormat('dd/MM HH:mm').format(dt);
     } catch (_) {
       return iso;
@@ -133,6 +129,12 @@ class _ListInvitesScreenState extends State<ListInvitesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Ingresos del día"),
+        foregroundColor: Colors.white,
+        toolbarHeight: 40,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           IconButton(
             tooltip: "Recargar",
@@ -140,6 +142,15 @@ class _ListInvitesScreenState extends State<ListInvitesScreen> {
             icon: const Icon(Icons.refresh),
           ),
         ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF7A6CF7), Color(0xFF9B59F6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: FutureBuilder<_TodayResult>(
         future: _future,

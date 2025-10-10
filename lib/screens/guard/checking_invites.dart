@@ -38,7 +38,7 @@ class _CheckinInvitesScreenState extends State<CheckinInvitesScreen> {
         body: {"short_code": code},
       );
 
-      if (!mounted) return; // 👈 evitamos error de contexto
+      if (!mounted) return;
 
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
@@ -58,14 +58,12 @@ class _CheckinInvitesScreenState extends State<CheckinInvitesScreen> {
         );
       }
     } catch (e) {
-      if (!mounted) return; // 👈 evitamos error de contexto
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Error de conexión: $e")));
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -74,16 +72,25 @@ class _CheckinInvitesScreenState extends State<CheckinInvitesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Check-in de invitaciones"),
-        backgroundColor: const Color(0xFF7A6CF7),
+        foregroundColor: Colors.white,
         toolbarHeight: 40,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF7A6CF7), Color(0xFF9B59F6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [
-          const WaveHeader(height: 120), // Ola decorativa
+          const WaveHeader(height: 120),
           Transform.translate(
             offset: const Offset(0, -30),
             child: Padding(

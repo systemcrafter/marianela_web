@@ -3,9 +3,9 @@ import 'package:marianela_web/core/services/auth_service.dart';
 import 'package:marianela_web/screens/home/shared/home_card.dart';
 import 'package:marianela_web/screens/home/shared/home_header_decoration.dart';
 import 'package:marianela_web/screens/home/shared/home_bottom_nav.dart';
-import 'package:marianela_web/screens/guard/checkin_invites.dart';
+import 'package:marianela_web/screens/guard/checking_invites.dart';
 import 'package:marianela_web/screens/guard/list_invites.dart';
-import 'package:marianela_web/screens/resident/ticket_form_screen.dart';
+import 'package:marianela_web/screens/guard/ticket_form_screen_guard.dart';
 
 class HomeScreenGuard extends StatelessWidget {
   const HomeScreenGuard({super.key});
@@ -70,7 +70,7 @@ class HomeScreenGuard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const TicketFormScreen(),
+                          builder: (_) => const TicketFormScreenGuard(),
                         ),
                       );
                     },
