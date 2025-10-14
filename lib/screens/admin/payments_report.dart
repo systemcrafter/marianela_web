@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:marianela_web/core/services/api_client.dart';
 import 'package:marianela_web/core/widgets/wave_header.dart';
+import 'package:marianela_web/screens/admin/payments_application.dart';
 
 class PaymentsReportScreen extends StatefulWidget {
   const PaymentsReportScreen({super.key});
@@ -93,46 +94,42 @@ class _PaymentsReportScreenState extends State<PaymentsReportScreen> {
       ),
       body: Column(
         children: [
-          const WaveHeader(height: 60),
-          Transform.translate(
-            offset: const Offset(0, -7),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.date_range),
-                      label: Text(
-                        _fromDate == null
-                            ? "Desde"
-                            : dateFmt.format(_fromDate!),
-                      ),
-                      onPressed: () => _pickDate(context, true),
+          const WaveHeader(height: 90),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.date_range),
+                    label: Text(
+                      _fromDate == null ? "Desde" : dateFmt.format(_fromDate!),
                     ),
+                    onPressed: () => _pickDate(context, true),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.date_range),
-                      label: Text(
-                        _toDate == null ? "Hasta" : dateFmt.format(_toDate!),
-                      ),
-                      onPressed: () => _pickDate(context, false),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.date_range),
+                    label: Text(
+                      _toDate == null ? "Hasta" : dateFmt.format(_toDate!),
                     ),
+                    onPressed: () => _pickDate(context, false),
                   ),
-                  if (_fromDate != null || _toDate != null)
-                    IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(() {
-                          _fromDate = null;
-                          _toDate = null;
-                        });
-                      },
-                    ),
-                ],
-              ),
+                ),
+                if (_fromDate != null || _toDate != null)
+                  IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      setState(() {
+                        _fromDate = null;
+                        _toDate = null;
+                      });
+                    },
+                  ),
+              ],
             ),
           ),
           Expanded(
@@ -196,69 +193,63 @@ class _PaymentsReportScreenState extends State<PaymentsReportScreen> {
                           ? dateFmt.format(parsedDate)
                           : 'Sin fecha';
 
-                      final amount = r['amount'] ?? 0;
-                      final houseCode = r['house_code'] ?? '—';
-                      final period = r['period'] ?? '—';
-                      final method = r['method'] ?? '—';
-                      final reference = r['reference'] ?? '—';
-                      final status = r['status'] ?? '—';
-                      final residentName = r['resident_name'] ?? '—';
-                      final residentEmail = r['resident_email'] ?? '—';
-                      final note = (r['note'] ?? '').toString();
-
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        elevation: 6,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    houseCode,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Chip(
-                                    label: Text(
-                                      status,
+                      return InkWell(
+                        onTap: () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  PaymentsApplicationScreen(report: r),
+                            ),
+                          );
+                          if (result != null && mounted) {
+                            await _refresh();
+                          }
+                        },
+                        child: Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          elevation: 6,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      r['house_code'] ?? '—',
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
                                       ),
                                     ),
-                                    backgroundColor: _statusColor(status),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              _kv('Período', period),
-                              _kv('Fecha', formattedDate),
-                              _kv('Monto', '₡$amount'),
-                              _kv('Método', method),
-                              _kv('Referencia', reference),
-                              const SizedBox(height: 8),
-                              _kv('Residente', residentName),
-                              _kv('Correo', residentEmail),
-                              if (note.isNotEmpty) ...[
-                                const SizedBox(height: 10),
-                                Text(
-                                  note,
-                                  style: const TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.black54,
-                                  ),
+                                    Chip(
+                                      label: Text(
+                                        r['status'] ?? '—',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      backgroundColor: _statusColor(
+                                        r['status'],
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                                const SizedBox(height: 8),
+                                _kv('Período', r['period'] ?? '—'),
+                                _kv('Fecha', formattedDate),
+                                _kv('Monto', '₡${r['amount']}'),
+                                _kv('Método', r['method'] ?? '—'),
+                                _kv('Referencia', r['reference'] ?? '—'),
+                                _kv('Residente', r['resident_name'] ?? '—'),
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       );
@@ -295,6 +286,8 @@ class _PaymentsReportScreenState extends State<PaymentsReportScreen> {
     switch (status) {
       case 'validado':
         return Colors.green;
+      case 'aplicado':
+        return Colors.blue;
       case 'reportado':
         return Colors.orange;
       case 'rechazado':
