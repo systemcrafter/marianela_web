@@ -4,6 +4,7 @@ import 'package:marianela_web/screens/home/shared/home_card.dart';
 import 'package:marianela_web/screens/home/shared/home_header_decoration.dart';
 import 'package:marianela_web/screens/home/shared/home_bottom_nav.dart';
 import 'package:marianela_web/screens/admin/payments_report.dart';
+import 'package:marianela_web/screens/admin/tickets_list.dart';
 
 class HomeScreenAdmin extends StatelessWidget {
   const HomeScreenAdmin({super.key});
@@ -53,10 +54,16 @@ class HomeScreenAdmin extends StatelessWidget {
                       );
                     },
                   ),
-                  const HomeCard(
-                    title: 'Incidencias',
-                    icon: Icons.report,
-                    onTap: _noop,
+                  HomeCard(
+                    title: 'Tickets abiertos',
+                    icon: Icons.support_agent,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const TicketsListScreen(),
+                        ),
+                      );
+                    },
                   ),
                   const HomeCard(
                     title: 'Accesos / Visitas',
