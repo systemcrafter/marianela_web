@@ -74,7 +74,7 @@ class HomeScreen extends StatelessWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,
-                      childAspectRatio: 1.2,
+                      childAspectRatio: 2.4,
                       children: [
                         _HomeActionButton(
                           label: "Autorizar visitas",

@@ -146,12 +146,20 @@ class _PeriodOpenScreenState extends State<PeriodOpenScreen> {
                                     if (value == null || value.isEmpty) {
                                       return 'Ingresa el monto de cobro';
                                     }
-                                    if (double.tryParse(value) == null) {
+                                    final number = double.tryParse(value);
+                                    if (number == null) {
                                       return 'Debe ser un número válido';
+                                    }
+                                    if (number <= 0) {
+                                      return 'El monto debe ser mayor que 0';
+                                    }
+                                    if (number > 99999) {
+                                      return 'El monto no puede superar 99,999 CRC';
                                     }
                                     return null;
                                   },
                                 ),
+
                                 const SizedBox(height: 24),
                                 ElevatedButton.icon(
                                   onPressed: _isLoading
@@ -166,7 +174,10 @@ class _PeriodOpenScreenState extends State<PeriodOpenScreen> {
                                             color: Colors.white,
                                           ),
                                         )
-                                      : const Icon(Icons.save_outlined),
+                                      : const Icon(
+                                          Icons.save_outlined,
+                                          color: Colors.white,
+                                        ),
                                   label: const Text(
                                     "Abrir periodo",
                                     style: TextStyle(color: Colors.white),

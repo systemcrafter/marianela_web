@@ -41,7 +41,7 @@ class HomeScreenResident extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 14,
                 crossAxisSpacing: 14,
-                childAspectRatio: 1.4,
+                childAspectRatio: 2.4,
                 children: [
                   HomeCard(
                     title: 'Autorizar visitas',
@@ -133,7 +133,10 @@ class HomeScreenResident extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: HomeBottomNav(onLogout: () => _logout(context)),
+      bottomNavigationBar: HomeBottomNav(
+        role: 'resident',
+        onLogout: () => _logout(context),
+      ),
     );
   }
 }

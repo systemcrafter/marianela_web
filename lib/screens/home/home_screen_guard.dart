@@ -37,7 +37,7 @@ class HomeScreenGuard extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 14,
                 crossAxisSpacing: 14,
-                childAspectRatio: 1.4,
+                childAspectRatio: 2.4,
                 children: [
                   HomeCard(
                     title: 'Registrar visita',
@@ -86,7 +86,10 @@ class HomeScreenGuard extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: HomeBottomNav(onLogout: () => _logout(context)),
+      bottomNavigationBar: HomeBottomNav(
+        role: 'guard',
+        onLogout: () => _logout(context),
+      ),
     );
   }
 }
