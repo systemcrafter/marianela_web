@@ -35,6 +35,38 @@ class ApiClient {
     return res;
   }
 
+  /// 👇 NUEVO: método PUT
+  static Future<http.Response> put(
+    String endpoint, {
+    Map<String, dynamic>? body,
+  }) async {
+    final url = Uri.parse("${Env.apiBaseUrl}$endpoint");
+    final res = await http.put(
+      url,
+      headers: {
+        ...AuthService.authHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: body != null ? jsonEncode(body) : null,
+    );
+    if (res.statusCode == 401) {
+      await AuthService.logout();
+      _redirectToLogin();
+    }
+    return res;
+  }
+
+  /// 👇 NUEVO: método DELETE
+  static Future<http.Response> delete(String endpoint) async {
+    final url = Uri.parse("${Env.apiBaseUrl}$endpoint");
+    final res = await http.delete(url, headers: AuthService.authHeaders());
+    if (res.statusCode == 401) {
+      await AuthService.logout();
+      _redirectToLogin();
+    }
+    return res;
+  }
+
   static void _redirectToLogin() {
     navigatorKey.currentState?.pushNamedAndRemoveUntil(
       '/login',
@@ -43,5 +75,5 @@ class ApiClient {
   }
 }
 
-// 🔑 Navigator global para poder redirigir desde cualquier parte
+// 🔑 Navigator global
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

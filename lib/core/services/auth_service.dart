@@ -114,10 +114,17 @@ class AuthService {
 
     final res = await ApiClient.get('/me'); // 👈 usamos ApiClient
     if (res.statusCode == 200) {
-      final data = jsonDecode(res.body) as Map<String, dynamic>;
-      _user = data;
+      final data = jsonDecode(res.body);
+
+      // 🧩 Asegura compatibilidad con ambos formatos de respuesta
+      final userData = data is Map && data.containsKey('data')
+          ? data['data']
+          : data;
+
+      _user = Map<String, dynamic>.from(userData);
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_userKey, jsonEncode(data));
+      await prefs.setString(_userKey, jsonEncode(_user));
+
       return true;
     }
 

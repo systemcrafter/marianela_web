@@ -5,6 +5,7 @@ import 'package:marianela_web/screens/home/shared/home_header_decoration.dart';
 import 'package:marianela_web/screens/home/shared/home_bottom_nav.dart';
 import 'package:marianela_web/screens/admin/payments_report.dart';
 import 'package:marianela_web/screens/admin/tickets_list.dart';
+import 'package:marianela_web/screens/admin/users_list.dart';
 
 class HomeScreenAdmin extends StatelessWidget {
   const HomeScreenAdmin({super.key});
@@ -38,11 +39,18 @@ class HomeScreenAdmin extends StatelessWidget {
                 crossAxisSpacing: 14,
                 childAspectRatio: 1.4,
                 children: [
-                  const HomeCard(
+                  HomeCard(
                     title: 'Usuarios',
                     icon: Icons.group,
-                    onTap: _noop,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const UsersListScreen(),
+                        ),
+                      );
+                    },
                   ),
+
                   HomeCard(
                     title: 'Pagos / Estados',
                     icon: Icons.receipt_long,

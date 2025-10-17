@@ -9,6 +9,7 @@ import 'package:marianela_web/screens/resident/invites_history.dart';
 import 'package:marianela_web/screens/resident/ticket_form_screen.dart';
 import 'package:marianela_web/screens/resident/ticket_history.dart';
 import 'package:marianela_web/screens/resident/payment_screen.dart';
+import 'package:marianela_web/screens/resident/user_info.dart';
 
 class HomeScreenResident extends StatelessWidget {
   const HomeScreenResident({super.key});
@@ -110,6 +111,18 @@ class HomeScreenResident extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const TicketsHistoryScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  HomeCard(
+                    title: 'Mi Perfil',
+                    icon: Icons.person_pin,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const UserInfoScreen(),
                         ),
                       );
                     },
