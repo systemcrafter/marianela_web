@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:marianela_web/core/services/api_client.dart';
 import 'package:marianela_web/core/widgets/wave_header.dart';
-import 'package:marianela_web/screens/admin/tickets_comments.dart';
+import 'package:marianela_web/screens/admin/tickets_detail.dart';
 
 class TicketsListScreen extends StatefulWidget {
   const TicketsListScreen({super.key});
@@ -25,7 +25,6 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchTickets() async {
-    // En tus resúmenes usas /tickets para admin. :contentReference[oaicite:2]{index=2}
     final res = await ApiClient.get('/tickets');
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body) as List;
@@ -66,7 +65,7 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
     switch (s.toLowerCase()) {
       case 'abierto':
         return Colors.orange;
-      case 'en proceso':
+      case 'en_proceso':
         return Colors.blue;
       case 'cerrado':
         return Colors.green;
@@ -100,19 +99,17 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
       ),
       body: Column(
         children: [
-          const WaveHeader(
-            height: 90,
-          ), // ← sin 'title' (así es tu widget). :contentReference[oaicite:3]{index=3}
+          const WaveHeader(height: 90),
           const SizedBox(height: 8),
 
-          // Filtro por estado (chips/botones)
+          // 🔹 Filtro por estado
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _statusButton('abierto', Colors.orange),
-                _statusButton('en proceso', Colors.blue),
+                _statusButton('en_proceso', Colors.blue),
                 _statusButton('cerrado', Colors.green),
               ],
             ),
@@ -120,7 +117,7 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
 
           const SizedBox(height: 8),
 
-          // Filtros por fecha
+          // 🔹 Filtros por fecha
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -150,7 +147,7 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
 
           const SizedBox(height: 8),
 
-          // Lista
+          // 🔹 Lista de tickets
           Expanded(
             child: FutureBuilder<List<Map<String, dynamic>>>(
               future: _futureTickets,
@@ -161,8 +158,8 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
                 if (snapshot.hasError) {
                   return Center(child: Text("Error: ${snapshot.error}"));
                 }
+
                 final all = snapshot.data ?? [];
-                // aplica filtros
                 final filtered = all.where((t) {
                   final status = (t['status'] ?? '').toString().toLowerCase();
                   final createdAt = DateTime.tryParse(
@@ -180,57 +177,84 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
                   );
                 }
 
-                return ListView.builder(
-                  itemCount: filtered.length,
-                  itemBuilder: (context, i) {
-                    final t = filtered[i];
-                    final created = DateTime.tryParse(
-                      (t['created_at'] ?? '').toString(),
-                    );
-                    final createdStr = created != null
-                        ? DateFormat('dd/MM/yyyy HH:mm').format(created)
-                        : 'Fecha desconocida';
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ListView.builder(
+                    itemCount: filtered.length,
+                    itemBuilder: (context, i) {
+                      final t = filtered[i];
+                      final created = DateTime.tryParse(
+                        (t['created_at'] ?? '').toString(),
+                      );
+                      final createdStr = created != null
+                          ? DateFormat('yyyy-MM-dd HH:mm').format(created)
+                          : 'Fecha desconocida';
 
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 3,
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: _statusColor(
-                            (t['status'] ?? '').toString(),
+                      final lastComment =
+                          (t['comments'] is List &&
+                              (t['comments'] as List).isNotEmpty)
+                          ? (t['comments'] as List).last['body']
+                          : 'Sin comentarios';
+
+                      return Card(
+                        elevation: 4,
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.assignment,
+                            color: Color(0xFF7A6CF7),
                           ),
-                          child: const Icon(
-                            Icons.confirmation_number,
-                            color: Colors.white,
+                          title: Text(
+                            (t['title'] ?? 'Sin título').toString(),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        ),
-                        title: Text(
-                          (t['title'] ?? 'Sin título').toString(),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          "Estado: ${t['status'] ?? 'N/D'} • Creado: $createdStr",
-                        ),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => TicketsCommentsScreen(
-                                ticketId: (t['id'] ?? '').toInt(),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Categoría: ${t['category'] ?? 'N/D'}"),
+                              Text("Descripción: ${t['description'] ?? 'N/D'}"),
+                              Text("Creado: $createdStr"),
+                              Text("Último comentario: $lastComment"),
+                              const SizedBox(height: 6),
+                              Chip(
+                                label: Text(
+                                  (t['status'] ?? 'N/D')
+                                      .toString()
+                                      .toUpperCase(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: _statusColor(
+                                  (t['status'] ?? '').toString(),
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
+                            ],
+                          ),
+                          onTap: () async {
+                            // ✅ Espera el resultado del detalle
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => TicketDetailAdminScreen(
+                                  ticketId:
+                                      int.tryParse(t['id'].toString()) ?? 0,
+                                ),
+                              ),
+                            );
+
+                            // ✅ Si el ticket fue cerrado, refresca la lista
+                            if (result == true && mounted) {
+                              setState(() {
+                                _futureTickets = _fetchTickets();
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),

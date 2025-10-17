@@ -9,7 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import "dart:html" as html;
 
 class InviteFormScreen extends StatefulWidget {
   const InviteFormScreen({super.key});
