@@ -6,6 +6,7 @@ import 'package:marianela_web/screens/home/shared/home_bottom_nav.dart';
 import 'package:marianela_web/screens/admin/payments_report.dart';
 import 'package:marianela_web/screens/admin/tickets_list.dart';
 import 'package:marianela_web/screens/admin/users_list.dart';
+import 'package:marianela_web/screens/admin/period_open.dart';
 
 class HomeScreenAdmin extends StatelessWidget {
   const HomeScreenAdmin({super.key});
@@ -73,10 +74,16 @@ class HomeScreenAdmin extends StatelessWidget {
                       );
                     },
                   ),
-                  const HomeCard(
-                    title: 'Accesos / Visitas',
-                    icon: Icons.verified_user,
-                    onTap: _noop,
+                  HomeCard(
+                    title: 'Abrir periodo',
+                    icon: Icons.calendar_month_outlined,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const PeriodOpenScreen(),
+                        ),
+                      );
+                    },
                   ),
                   const HomeCard(
                     title: 'Configuración',
