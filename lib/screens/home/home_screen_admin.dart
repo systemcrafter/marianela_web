@@ -85,11 +85,6 @@ class HomeScreenAdmin extends StatelessWidget {
                       );
                     },
                   ),
-                  const HomeCard(
-                    title: 'Configuración',
-                    icon: Icons.settings,
-                    onTap: _noop,
-                  ),
                 ],
               ),
             ),
@@ -104,4 +99,4 @@ class HomeScreenAdmin extends StatelessWidget {
   }
 }
 
-void _noop() {}
+// void _noop() {}

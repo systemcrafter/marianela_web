@@ -207,7 +207,7 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const WaveHeader(height: 220), // Ola decorativa
+            const WaveHeader(height: 180), // Ola decorativa
             Transform.translate(
               offset: const Offset(0, -30),
               child: Padding(

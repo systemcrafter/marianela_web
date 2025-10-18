@@ -128,7 +128,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-                  const WaveHeader(height: 120),
+                  const WaveHeader(height: 180),
                   Transform.translate(
                     offset: const Offset(0, -30),
                     child: Padding(

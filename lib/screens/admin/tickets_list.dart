@@ -99,7 +99,7 @@ class _TicketsListScreenState extends State<TicketsListScreen> {
       ),
       body: Column(
         children: [
-          const WaveHeader(height: 90),
+          const WaveHeader(height: 180),
           const SizedBox(height: 8),
 
           // 🔹 Filtro por estado

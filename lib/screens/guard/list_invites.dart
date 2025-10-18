@@ -47,7 +47,7 @@ class _ListInvitesScreenState extends State<ListInvitesScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const WaveHeader(height: 200),
+        const WaveHeader(height: 180),
         Transform.translate(
           offset: const Offset(0, -24),
           child: Padding(

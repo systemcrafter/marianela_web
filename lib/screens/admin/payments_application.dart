@@ -23,8 +23,8 @@ class _PaymentsApplicationScreenState extends State<PaymentsApplicationScreen> {
       // 🔹 Armar body para el endpoint /api/payments
       final body = {
         'house_id': widget.report['house_id'],
-        'period': widget
-            .report['period'], // 👈 usa el string del reporte, ej: "2025-10"
+        'period':
+            widget.report['period'], // usa el string del reporte, ej: "2025-10"
         'amount': widget.report['amount'],
         'method': widget.report['method'] ?? 'transferencia',
         'reference': widget.report['reference'] ?? '',

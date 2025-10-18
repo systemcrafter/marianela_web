@@ -94,7 +94,7 @@ class _TicketsHistoryScreenState extends State<TicketsHistoryScreen> {
       ),
       body: Column(
         children: [
-          const WaveHeader(height: 120),
+          const WaveHeader(height: 180),
 
           // 🔹 Filtro de fechas
           Padding(

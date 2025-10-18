@@ -126,7 +126,7 @@ class _UsersListScreenState extends State<UsersListScreen> {
       ),
       body: Column(
         children: [
-          const WaveHeader(height: 90),
+          const WaveHeader(height: 180),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(

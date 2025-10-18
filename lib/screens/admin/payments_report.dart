@@ -94,7 +94,7 @@ class _PaymentsReportScreenState extends State<PaymentsReportScreen> {
       ),
       body: Column(
         children: [
-          const WaveHeader(height: 90),
+          const WaveHeader(height: 180),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

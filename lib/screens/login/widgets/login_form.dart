@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/routes/app_routes.dart';
 import 'gradient_button.dart';
+import 'package:marianela_web/screens/home/support_required.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -90,13 +91,22 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 14),
           Center(
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SupportRequiredScreen(),
+                  ),
+                );
+              },
+
               // Color del texto (y estados) del TextButton
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFF7A6CF7),
               ),
               child: const Text(
-                '¿Olvidaste tu contraseña?',
+                '¿Olvidaste tu contraseña?\n¿Requires acceso?',
+                textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),

@@ -47,7 +47,7 @@ class AccountsPendingScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          const WaveHeader(height: 120), // 🔹 Ola decorativa
+          const WaveHeader(height: 180), // 🔹 Ola decorativa
           Expanded(
             child: Transform.translate(
               offset: const Offset(0, -10),

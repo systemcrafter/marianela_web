@@ -38,7 +38,7 @@ class _TicketDetailAdminScreenState extends State<TicketDetailAdminScreen> {
     }
   }
 
-  // 🔴 Cerrar ticket
+  // Cerrar ticket
   Future<void> _closeTicket() async {
     final ctrl = TextEditingController(text: 'Problema solucionado');
 
@@ -90,15 +90,15 @@ class _TicketDetailAdminScreenState extends State<TicketDetailAdminScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Ticket cerrado correctamente'),
+            content: Text('Ticket cerrado correctamente'),
             backgroundColor: Colors.green,
           ),
         );
       }
-      await _fetchTicket(); // ✅ refrescar en la misma vista
+      await _fetchTicket(); // refrescar en la misma vista
     } else {
       if (!mounted) {
-        return; // ✅ evita usar context si el widget ya no está montado
+        return; // evita usar context si el widget ya no está montado
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -111,7 +111,7 @@ class _TicketDetailAdminScreenState extends State<TicketDetailAdminScreen> {
     if (mounted) setState(() => isClosing = false);
   }
 
-  // 🔵 Marcar como "en proceso"
+  // Marcar como "en proceso"
   Future<void> _markInProcess() async {
     final ctrl = TextEditingController(text: 'Ticket en proceso');
 
@@ -167,7 +167,7 @@ class _TicketDetailAdminScreenState extends State<TicketDetailAdminScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('🔵 Ticket marcado como "en proceso"'),
+            content: Text('Ticket marcado como "en proceso"'),
             backgroundColor: Colors.blueAccent,
           ),
         );
@@ -175,7 +175,7 @@ class _TicketDetailAdminScreenState extends State<TicketDetailAdminScreen> {
       await _fetchTicket(); // ✅ refresca en pantalla
     } else {
       if (!mounted) {
-        return; // ✅ evita usar context si el widget ya no está montado
+        return; // evita usar context si el widget ya no está montado
       }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -212,7 +212,7 @@ class _TicketDetailAdminScreenState extends State<TicketDetailAdminScreen> {
         toolbarHeight: 40,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context, true), // ✅ devuelve true
+          onPressed: () => Navigator.pop(context, true), // devuelve true
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(

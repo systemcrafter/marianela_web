@@ -110,7 +110,7 @@ class _InvitesHistoryScreenState extends State<InvitesHistoryScreen> {
 
       body: Column(
         children: [
-          const WaveHeader(height: 120), // Ola decorativa
+          const WaveHeader(height: 180), // Ola decorativa
           // 🔹 Filtro de fechas
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
