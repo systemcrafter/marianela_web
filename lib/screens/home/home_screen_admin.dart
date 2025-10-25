@@ -30,62 +30,63 @@ class HomeScreenAdmin extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          HomeHeaderDecoration(height: 120, title: "Bienvenid(a) $name"),
+          HomeHeaderDecoration(height: 120, title: "Bienvenid@ $name"),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 14,
-                crossAxisSpacing: 14,
-                childAspectRatio: 2.4,
-                children: [
-                  HomeCard(
-                    title: 'Usuarios',
-                    icon: Icons.group,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const UsersListScreen(),
-                        ),
-                      );
-                    },
-                  ),
+              // 🔧 Se reemplazó GridView.count por LayoutBuilder + GridView.builder
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Ajusta el aspect ratio automáticamente según el ancho disponible
+                  final aspectRatio = constraints.maxWidth < 600 ? 1.3 : 2.0;
 
-                  HomeCard(
-                    title: 'Pagos / Estados',
-                    icon: Icons.receipt_long,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const PaymentsReportScreen(),
-                        ),
+                  final items = [
+                    {
+                      'title': 'Usuarios',
+                      'icon': Icons.group,
+                      'screen': const UsersListScreen(),
+                    },
+                    {
+                      'title': 'Pagos / Estados',
+                      'icon': Icons.receipt_long,
+                      'screen': const PaymentsReportScreen(),
+                    },
+                    {
+                      'title': 'Tickets abiertos',
+                      'icon': Icons.support_agent,
+                      'screen': const TicketsListScreen(),
+                    },
+                    {
+                      'title': 'Abrir periodo',
+                      'icon': Icons.calendar_month_outlined,
+                      'screen': const PeriodOpenScreen(),
+                    },
+                  ];
+
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 14,
+                      crossAxisSpacing: 14,
+                      childAspectRatio: aspectRatio,
+                    ),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return HomeCard(
+                        title: item['title'] as String,
+                        icon: item['icon'] as IconData,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => item['screen'] as Widget,
+                            ),
+                          );
+                        },
                       );
                     },
-                  ),
-                  HomeCard(
-                    title: 'Tickets abiertos',
-                    icon: Icons.support_agent,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const TicketsListScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  HomeCard(
-                    title: 'Abrir periodo',
-                    icon: Icons.calendar_month_outlined,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const PeriodOpenScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),
@@ -98,5 +99,3 @@ class HomeScreenAdmin extends StatelessWidget {
     );
   }
 }
-
-// void _noop() {}

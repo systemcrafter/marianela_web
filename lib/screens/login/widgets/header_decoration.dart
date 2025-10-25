@@ -1,3 +1,4 @@
+//Header_decoration
 import 'package:flutter/material.dart';
 
 /// Cabecera con degradé morado y ola inferior
@@ -62,7 +63,7 @@ class LoginHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   const Text(
-                    'Residencial Marianela Alajuela',
+                    'Residencial Marianela',
                     style: TextStyle(
                       fontSize: 28,
                       color: Colors.white,

@@ -29,58 +29,67 @@ class HomeScreenGuard extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          HomeHeaderDecoration(height: 120, title: "Bienvenid(a) $name"),
+          HomeHeaderDecoration(height: 120, title: "Bienvenid@ $name"),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 14,
-                crossAxisSpacing: 14,
-                childAspectRatio: 2.4,
-                children: [
-                  HomeCard(
-                    title: 'Registrar visita',
-                    icon: Icons.how_to_reg,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const CheckinInvitesScreen(),
-                        ),
+              // 🔧 Se reemplazó GridView.count por LayoutBuilder + GridView.builder
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Ajusta el aspect ratio dinámicamente según el ancho disponible
+                  final aspectRatio = constraints.maxWidth < 600 ? 1.3 : 2.0;
+
+                  final items = [
+                    {
+                      'title': 'Registrar visita',
+                      'icon': Icons.how_to_reg,
+                      'screen': const CheckinInvitesScreen(),
+                    },
+                    {
+                      'title': 'Bitácora',
+                      'icon': Icons.fact_check,
+                      'screen': const ListInvitesScreen(),
+                    },
+                    {
+                      'title': 'Reportar incidencia',
+                      'icon': Icons.support_agent,
+                      'screen': const TicketFormScreenGuard(),
+                    },
+                    {
+                      'title': 'Escanear QR',
+                      'icon': Icons.qr_code_scanner,
+                      'screen': null, // Placeholder sin acción
+                    },
+                  ];
+
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 14,
+                      crossAxisSpacing: 14,
+                      childAspectRatio: aspectRatio,
+                    ),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return HomeCard(
+                        title: item['title'] as String,
+                        icon: item['icon'] as IconData,
+                        onTap: () {
+                          final screen = item['screen'];
+                          if (screen != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => screen as Widget,
+                              ),
+                            );
+                          }
+                        },
                       );
                     },
-                  ),
-                  HomeCard(
-                    title: 'Bitácora',
-                    icon: Icons.fact_check,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ListInvitesScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  HomeCard(
-                    title: 'Reportar incidencia',
-                    icon: Icons.support_agent,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const TicketFormScreenGuard(),
-                        ),
-                      );
-                    },
-                  ),
-                  HomeCard(
-                    title: 'Escanear QR',
-                    icon: Icons.qr_code_scanner,
-                    onTap: () {},
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),
