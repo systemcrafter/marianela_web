@@ -36,6 +36,8 @@ class _PeriodOpenScreenState extends State<PeriodOpenScreen> {
         },
       );
 
+      if (!mounted) return;
+
       if (res.statusCode == 201) {
         final message =
             'Periodo ${_periodCtrl.text.trim()} abierto exitosamente';

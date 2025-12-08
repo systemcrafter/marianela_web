@@ -8,7 +8,7 @@ import 'package:marianela_web/screens/login/widgets/gradient_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
-// ignore: avoid_web_libraries_in_flutter
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import "dart:html" as html;
 
 class InviteFormScreen extends StatefulWidget {
@@ -103,6 +103,8 @@ class _InviteFormScreenState extends State<InviteFormScreen> {
 
         if (!kIsWeb) {
           // 📱 Android/iOS → menú nativo de compartir
+
+          // ignore: deprecated_member_use
           await Share.share(
             "Has autorizado una visita a Residencial Marianela.\n"
             "Código: $shortCode\n"

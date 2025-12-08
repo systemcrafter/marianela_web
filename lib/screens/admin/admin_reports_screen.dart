@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:marianela_web/core/services/api_client.dart';
 import 'package:marianela_web/core/widgets/wave_header.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html; // 👈 Vital para descargar archivos en Web
+// ignore: avoid_web_libraries_in_flutter, deprecated_member_use
+import 'dart:html' as html;
 
 class AdminReportsScreen extends StatefulWidget {
   const AdminReportsScreen({super.key});
@@ -32,10 +32,11 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
     );
     if (picked != null) {
       setState(() {
-        if (isFrom)
+        if (isFrom) {
           _fromDate = picked;
-        else
+        } else {
           _toDate = picked;
+        }
       });
     }
   }
@@ -80,9 +81,15 @@ class _AdminReportsScreenState extends State<AdminReportsScreen> {
         // 2. Truco para descargar Blob en Web
         final blob = html.Blob([res.bodyBytes], 'text/csv');
         final blobUrl = html.Url.createObjectUrlFromBlob(blob);
-        final anchor = html.AnchorElement(href: blobUrl)
+        // final anchor = html.AnchorElement(href: blobUrl)
+        //   ..setAttribute("download", fileName)
+        //   ..click();
+
+        // Usamos el anchor directamente sin asignarlo a variable para evitar el warning
+        html.AnchorElement(href: blobUrl)
           ..setAttribute("download", fileName)
           ..click();
+
         html.Url.revokeObjectUrl(blobUrl);
 
         if (mounted) {

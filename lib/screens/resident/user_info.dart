@@ -69,6 +69,8 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         },
       );
 
+      if (!mounted) return;
+
       if (res.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Contraseña actualizada con éxito")),
