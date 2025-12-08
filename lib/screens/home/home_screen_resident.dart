@@ -34,7 +34,7 @@ class HomeScreenResident extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          HomeHeaderDecoration(height: 120, title: "Bienvenid(a) $name"),
+          HomeHeaderDecoration(height: 120, title: "Bienvenid@ $name"),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16),

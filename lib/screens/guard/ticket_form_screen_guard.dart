@@ -46,7 +46,7 @@ class _TicketFormScreenState extends State<TicketFormScreenGuard> {
       final user = AuthService.user!;
       final data = {
         "resident_id": user["resident_id"] ?? user["id"],
-        "house_id": user["house_id"],
+        "house_id": 103, // Oficiales de seguridad
         "category": _category,
         "title": _titleCtrl.text.trim(),
         "description": _descriptionCtrl.text.trim(),
@@ -54,6 +54,7 @@ class _TicketFormScreenState extends State<TicketFormScreenGuard> {
 
       // 🔁 ÚNICO CAMBIO: usar el endpoint de áreas comunes
       final res = await ApiClient.post("/tickets/common", body: data);
+      //final res = await ApiClient.post("/tickets", body: data);
 
       if (!mounted) return;
 

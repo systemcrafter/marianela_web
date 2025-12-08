@@ -7,6 +7,7 @@ import 'package:marianela_web/screens/admin/payments_report.dart';
 import 'package:marianela_web/screens/admin/tickets_list.dart';
 import 'package:marianela_web/screens/admin/users_list.dart';
 import 'package:marianela_web/screens/admin/period_open.dart';
+import 'package:marianela_web/screens/admin/admin_reports_screen.dart';
 
 class HomeScreenAdmin extends StatelessWidget {
   const HomeScreenAdmin({super.key});
@@ -60,6 +61,11 @@ class HomeScreenAdmin extends StatelessWidget {
                       'title': 'Abrir periodo',
                       'icon': Icons.calendar_month_outlined,
                       'screen': const PeriodOpenScreen(),
+                    },
+                    {
+                      'title': 'Reportes y CSV',
+                      'icon': Icons.download_for_offline,
+                      'screen': const AdminReportsScreen(),
                     },
                   ];
 
