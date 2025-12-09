@@ -15,16 +15,15 @@ class PaymentsApplicationScreen extends StatefulWidget {
 
 class _PaymentsApplicationScreenState extends State<PaymentsApplicationScreen> {
   bool _isLoading = false;
+  bool _isRejecting = false; // Estado para carga del rechazo
 
+  // 🟢 Lógica de APLICAR (Aprobar)
   Future<void> _applyPayment() async {
     setState(() => _isLoading = true);
-
     try {
-      // 🔹 Armar body para el endpoint /api/payments
       final body = {
         'house_id': widget.report['house_id'],
-        'period':
-            widget.report['period'], // usa el string del reporte, ej: "2025-10"
+        'period': widget.report['period'],
         'amount': widget.report['amount'],
         'method': widget.report['method'] ?? 'transferencia',
         'reference': widget.report['reference'] ?? '',
@@ -65,6 +64,97 @@ class _PaymentsApplicationScreenState extends State<PaymentsApplicationScreen> {
     }
   }
 
+  // 🔴 Lógica de RECHAZAR
+  Future<void> _rejectPayment(String reason) async {
+    if (reason.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Debes indicar un motivo")));
+      return;
+    }
+
+    setState(() => _isRejecting = true);
+    try {
+      final reportId = widget.report['id'];
+      // Endpoint definido en tu api.php y PaymentReportController
+      final res = await ApiClient.post(
+        '/payment-reports/$reportId/reject',
+        body: {'reason': reason},
+      );
+
+      if (!mounted) return;
+
+      if (res.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('El pago ha sido rechazado.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        Navigator.pop(context, true); // Regresamos true para recargar lista
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al rechazar: ${res.body}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) setState(() => _isRejecting = false);
+    }
+  }
+
+  // Cuadro de diálogo para pedir el motivo
+  void _showRejectDialog() {
+    final reasonCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Rechazar pago"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Indique el motivo por el cual rechaza este comprobante:",
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: reasonCtrl,
+              maxLines: 2,
+              decoration: const InputDecoration(
+                hintText: "Ej: Monto incompleto, captura borrosa...",
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Cancelar"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              Navigator.pop(ctx); // Cerrar el diálogo
+              _rejectPayment(reasonCtrl.text.trim()); // Ejecutar rechazo
+            },
+            child: const Text(
+              "Confirmar Rechazo",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final report = widget.report;
@@ -73,9 +163,12 @@ class _PaymentsApplicationScreenState extends State<PaymentsApplicationScreen> {
     final parsedDate = dateStr.isNotEmpty ? DateTime.tryParse(dateStr) : null;
     final formattedDate = parsedDate != null ? dateFmt.format(parsedDate) : '—';
 
+    // Bloqueo general si algo está cargando
+    final busy = _isLoading || _isRejecting;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Aplicar pago'),
+        title: const Text('Gestionar Pago'),
         foregroundColor: Colors.white,
         toolbarHeight: 40,
         flexibleSpace: Container(
@@ -99,6 +192,7 @@ class _PaymentsApplicationScreenState extends State<PaymentsApplicationScreen> {
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min, // Ajustar al contenido
               children: [
                 Text(
                   'Casa ${report['house_code'] ?? '—'}',
@@ -116,30 +210,64 @@ class _PaymentsApplicationScreenState extends State<PaymentsApplicationScreen> {
                 _kv('Referencia', report['reference'] ?? '—'),
                 const SizedBox(height: 16),
                 const Divider(),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : _applyPayment,
-                    icon: _isLoading
-                        ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Icon(Icons.check_circle, color: Colors.white),
-                    label: Text(
-                      _isLoading ? 'Aplicando pago...' : '¿Aplicar pago?',
-                      style: const TextStyle(color: Colors.white),
+                const SizedBox(height: 20),
+
+                // 🔹 ZONA DE BOTONES
+                Row(
+                  children: [
+                    // Botón Rechazar
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: busy ? null : _showRejectDialog,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red,
+                          side: const BorderSide(color: Colors.red),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        icon: _isRejecting
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.red,
+                                ),
+                              )
+                            : const Icon(Icons.cancel),
+                        label: const Text("Rechazar"),
+                      ),
                     ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7A6CF7),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+
+                    const SizedBox(width: 12),
+
+                    // Botón Aplicar
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: busy ? null : _applyPayment,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF7A6CF7),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        icon: _isLoading
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.check_circle,
+                                color: Colors.white,
+                              ),
+                        label: Text(
+                          _isLoading ? "Aplicando..." : "Aplicar Pago",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
